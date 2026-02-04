@@ -19,9 +19,9 @@ class Automaton:
                 values.append(int(char))
             elif char == '-':
                 values.append(0)
-            # Nota: Dejamos el soporte para 'X' y '/' para los siguientes tests
+                
         return values
 
     def output(self):
-        # Para este test de tiros regulares, basta con sumar los valores
+
         return sum(self.roll_values)
