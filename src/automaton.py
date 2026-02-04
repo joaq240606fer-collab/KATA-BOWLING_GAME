@@ -27,16 +27,23 @@ class Automaton:
 
     def output(self):
         total_score = 0
-        # Usamos self.rolls para saber qué "regla" aplicar (Spare o Strike)
-        # Usamos self.roll_values para obtener los puntos
+        # Recorremos la lista de caracteres originales
         for i, char in enumerate(self.rolls):
-            # Sumamos el valor base del lanzamiento actual
+            # Sumamos el valor base del lanzamiento (ya procesado en _parse_rolls)
             total_score += self.roll_values[i]
             
-            # REGLA DEL SPARE:
-            # Si es un spare, sumamos el valor del SIGUIENTE lanzamiento físico
+            # REGLA DEL SPARE: Suma el siguiente lanzamiento
             if char == '/':
                 if i + 1 < len(self.roll_values):
                     total_score += self.roll_values[i + 1]
+            
+            # REGLA DEL STRIKE: Suma los dos siguientes lanzamientos
+            elif char == 'X':
+                # Primer strike
+                if i + 1 < len(self.roll_values):
+                    total_score += self.roll_values[i + 1]
+                # Segundo strike
+                if i + 2 < len(self.roll_values):
+                    total_score += self.roll_values[i + 2]
                     
         return total_score
