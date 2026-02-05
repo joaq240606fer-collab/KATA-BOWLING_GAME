@@ -18,32 +18,39 @@ class Automaton:
             elif char == '-':
                 values.append(0)
             elif char == '/':
-                # El valor de este lanzamiento es lo que falte para 10
-                # Miramos el valor numérico del lanzamiento anterior
+                
                 values.append(10 - values[-1])
             elif char == 'X':
                 values.append(10)
         return values
 
     def output(self):
-        total_score = 0
-        # Recorremos la lista de caracteres originales
-        for i, char in enumerate(self.rolls):
-            # Sumamos el valor base del lanzamiento (ya procesado en _parse_rolls)
-            total_score += self.roll_values[i]
-            
-            # REGLA DEL SPARE: Suma el siguiente lanzamiento
-            if char == '/':
-                if i + 1 < len(self.roll_values):
-                    total_score += self.roll_values[i + 1]
-            
-            # REGLA DEL STRIKE: Suma los dos siguientes lanzamientos
-            elif char == 'X':
-                # Primer strike
-                if i + 1 < len(self.roll_values):
-                    total_score += self.roll_values[i + 1]
-                # Segundo strike
-                if i + 2 < len(self.roll_values):
-                    total_score += self.roll_values[i + 2]
-                    
-        return total_score
+      total_score = 0
+      i= 0 
+      for frame in range(10): # definimos un máximo de 10 frames
+        if i >= len(self.roll_values):
+            break # no mas lanzamientos disponibles
+
+        if self.rolls[i] == 'X': #strike
+            total_score += 10
+            # añadimos bono a los siguientes dos lanzamientos
+            if i+1 < len(self.roll_values):
+                total_score += self.roll_values[i+1]
+            if i+2 < len(self.roll_values):
+                total_score += self.roll_values[i+2]
+            i += 1 # strike consume un lanzamiento 
+        else:
+            # frame normal o spare
+            first_roll = self.roll_values[i]
+            second_roll = 0
+            if i+1 < len(self.roll_values):
+                second_roll = self.roll_values[i+1]
+            frame_score = first_roll + second_roll
+            total_score += frame_score
+
+            if self.rolls[i+1] == '/' if i + 1 < len(self.rolls) else False: # spare
+                # añadimos bono al siguiente lanzamiento
+                if i+2 < len(self.roll_values):
+                    total_score += self.roll_values[i+2]
+            i += 2 # frame ocupa dos lanzamientos
+      return total_score
